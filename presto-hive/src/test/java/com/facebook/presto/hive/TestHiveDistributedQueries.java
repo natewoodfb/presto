@@ -41,8 +41,24 @@ public class TestHiveDistributedQueries
     public void testExplainOfCreateTableAs()
     {
         String query = "CREATE TABLE copy_orders AS SELECT * FROM orders";
-        MaterializedResult result = computeActual("EXPLAIN " + query);
+        MaterializedResult result = computeActual("EXPLAIN ANALYZE " + query);
+        System.out.println(getOnlyElement(result.getOnlyColumnAsSet()));
         assertEquals(getOnlyElement(result.getOnlyColumnAsSet()), getExplainPlan(query, LOGICAL));
+    }
+
+    @Test
+    public void testExplainAnalyzeOfSelect()
+    {
+        computeActual("CREATE TABLE o WITH (partitioned_by = ARRAY['orderkey']) " +
+                "AS SELECT orderstatus, shippriority, orderkey FROM orders WHERE orderkey < 10");
+        String query = "SELECT orderkey FROM o";
+        MaterializedResult result1 = computeActual(query);
+        MaterializedResult result2 = computeActual("EXPLAIN ANALYZE " + query);
+        System.out.println(result1);
+        System.out.println(result2);
+        //assertEquals(getOnlyElement(result1.getOnlyColumnAsSet()), result2.getOnlyColumnAsSet());
+
+        assertUpdate("DROP TABLE o");
     }
 
     // Hive specific tests should normally go in TestHiveIntegrationSmokeTest
