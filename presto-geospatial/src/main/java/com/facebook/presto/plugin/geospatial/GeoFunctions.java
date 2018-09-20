@@ -159,6 +159,16 @@ public final class GeoFunctions
         return serialize(linestring);
     }
 
+    @Description("Returns a MultiPoint from an array of points")
+    @ScalarFunction("ST_MultiPoint")
+    @SqlType(GEOMETRY_TYPE_NAME)
+    public static Slice stMultiPoint(@SqlType("array(" + GEOMETRY_TYPE_NAME + ")") Block input)
+    {
+        MultiPath multiPath = new Polyline();
+        
+        return null;
+    }
+
     @Description("Returns a Geometry type Point object with the given coordinate values")
     @ScalarFunction("ST_Point")
     @SqlType(GEOMETRY_TYPE_NAME)
